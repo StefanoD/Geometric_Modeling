@@ -53,8 +53,8 @@ public:
     CVec4f Project(CVec4f Point); // projection in the view system coordinates
 
     // view-to-world/world-to-view transformations
-    CMat4f getTransform1();  // view to world
-    CMat4f getTransform2();  // world to view
+    CMat4f getViewToWorldTransformMatrix();  // view to world
+    CMat4f getWorldToViewTransformMatrix();  // world to view
 };
 
 #endif

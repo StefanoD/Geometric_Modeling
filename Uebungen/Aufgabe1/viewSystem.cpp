@@ -221,7 +221,7 @@ CVec4f viewSystem::Project(CVec4f Point)
     return Point;
 }
 
-CMat4f viewSystem::getTransform1()
+CMat4f viewSystem::getViewToWorldTransformMatrix()
 {
     CMat4f M;
     // AUFGABE01
@@ -229,7 +229,7 @@ CMat4f viewSystem::getTransform1()
     return M;
 }
 
-CMat4f viewSystem::getTransform2()
+CMat4f viewSystem::getWorldToViewTransformMatrix()
 {
     CMat4f M;
     // AUFGABE01

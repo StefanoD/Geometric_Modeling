@@ -86,7 +86,7 @@ void Quader::setData(CVec4f l, CVec4f u)
 
 void Quader::draw(viewSystem &view, Color col)
 {
-    CMat4f mat = view.getTransform2();
+    CMat4f mat = view.getWorldToViewTransformMatrix();
 
     CVec4f Quader[8];
     for (int i=0; i<8;i++){

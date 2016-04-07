@@ -56,7 +56,8 @@ void init ()
                  CVec4f(0, 0,-1, 0), // ViewDir
                  CVec4f(0, 1, 0, 0), // ViewUp
                  299);
-    view.setMode(VIEW_QUATERNION_MODE); // Hier für AUFGABE01 auf VIEW_MATRIX_MODE setzen.
+    //view.setMode(VIEW_QUATERNION_MODE); // Hier für AUFGABE01 auf VIEW_MATRIX_MODE setzen.
+    view.setMode(VIEW_MATRIX_MODE); // Hier für AUFGABE01 auf VIEW_MATRIX_MODE setzen.
 
     Q1.setData(CVec4f( -25, -25, -25, 1),CVec4f(  25,  25,  25, 1));
     Q2.setData(CVec4f(   0,   0,   0, 1),CVec4f( 100, 100, 100, 1));
