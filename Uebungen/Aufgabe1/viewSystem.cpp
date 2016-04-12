@@ -223,18 +223,44 @@ CVec4f viewSystem::Project(CVec4f Point)
 
 CMat4f viewSystem::getViewToWorldTransformMatrix()
 {
-    CMat4f M;
     // AUFGABE01
 
-    return M;
+    // Skript S. 2-24
+    const float arrTranslation[4][4] = {
+                                        {1, 0, 0, -EyePoint(0)},
+                                        {0, 1, 0, -EyePoint(1)},
+                                        {0, 0, 1, -EyePoint(2)},
+                                        {0, 0, 0, 1}
+                                        };
+    const CMat4f matTranslation(arrTranslation);
+
+    // Die einzelnen Zeilen der Rotationsmatrix berechnen
+    // Skript S. 2-40
+    CVec4f row3 = ViewDir;
+    row3.normalize();
+
+    CVec4f row1 = ViewUp.cross(ViewDir);
+    row1.normalize();
+
+    const CVec4f row2 = row3.cross(row1);
+
+    const float arrRotation[4][4] = {
+                            { row1(0), row1(1), row1(2), 0 },
+                            { row2(0), row2(1), row2(2), 0 },
+                            { row3(0), row3(1), row3(2), 0 },
+                            { 0,       0,       0,       1 } };
+
+    CMat4f T(arrTranslation);
+    CMat4f R(arrRotation);
+
+    CMat4f matRotation = R * T;
+
+    return matRotation;
 }
 
 CMat4f viewSystem::getWorldToViewTransformMatrix()
 {
-    CMat4f M;
-    // AUFGABE01
-
-    return M;
+    return getViewToWorldTransformMatrix().getTransposed();
 }
 
 CMat4f viewSystem::RotationMatrix(CVec4f axis, float angle)
@@ -294,25 +320,4 @@ CMat4f viewSystem::RotationMatrix(CVec4f axis, float angle)
     }
 
     return Rot;
-}
-
-CMat4f viewSystem::Inverse(CMat4f M)
-// Berechnet die Inverse einer 4x4 Matrix M der Art
-//             | A a |
-//             | 0 1 |
-// mit einer orthonormalen 3x3 Matrix A.
-// Die Inverse ist dann gegeben durch
-//             | A^T -A^t*a |
-//             |  0     1   |
-{
-    float Mat[4][4];
-    CVec4f a;
-    for (int i=0; i<4; i++) for (int j=0; j<4; j++) Mat[i][j]=M(i,j);
-    for (int i=0; i<3; i++) { Mat[i][3]=0; a(i)=M(i,3); }
-    for (int i=0; i<3; i++) for (int j=0; j<i; j++) { float x=Mat[i][j]; Mat[i][j]=Mat[j][i]; Mat[j][i]=x; }
-    CMat4f tmp(Mat);
-    a = tmp*a;
-    for (int i=0; i<3; i++) tmp(i,3)=-a(i);
-
-    return tmp;
 }
