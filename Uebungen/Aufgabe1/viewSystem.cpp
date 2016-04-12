@@ -260,6 +260,7 @@ CMat4f viewSystem::getViewToWorldTransformMatrix()
 
 CMat4f viewSystem::getWorldToViewTransformMatrix()
 {
+    // AUFGABE01
     return getViewToWorldTransformMatrix().getTransposed();
 }
 
