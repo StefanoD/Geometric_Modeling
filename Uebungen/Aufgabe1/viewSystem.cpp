@@ -253,9 +253,7 @@ CMat4f viewSystem::getViewToWorldTransformMatrix()
     CMat4f T(arrTranslation);
     CMat4f R(arrRotation);
 
-    CMat4f matRotation = R * T;
-
-    return matRotation;
+    return R * T;
 }
 
 CMat4f viewSystem::getWorldToViewTransformMatrix()
