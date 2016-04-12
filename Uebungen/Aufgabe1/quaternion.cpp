@@ -17,3 +17,8 @@ Quaternion::Quaternion()
 Quaternion::~Quaternion()
 {
 }
+
+Quaternion Quaternion::operator *(const Quaternion &quat)
+{
+
+}

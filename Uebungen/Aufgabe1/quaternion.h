@@ -10,12 +10,14 @@
 
 class Quaternion {
 private:
-	float x[4];
+    float x[4];
 
 public:
-	// constructors/destructors
-	Quaternion();									// default constructor
-	~Quaternion();
+    // constructors/destructors
+    Quaternion();									// default constructor
+    ~Quaternion();
+
+    Quaternion operator * (const Quaternion &quat);
 
 };
 
