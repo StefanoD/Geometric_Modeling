@@ -267,7 +267,7 @@ template <class T, unsigned SIZE>
 CVector<T, SIZE> CVector<T,SIZE>::operator - ()
 {
     T atBuffer[SIZE];
-    for (int i=0; i<SIZE; i++) atBuffer[i] = -m_atData[i];
+    for (unsigned i=0; i<SIZE; i++) atBuffer[i] = -m_atData[i];
     return CVector<T, SIZE> (atBuffer);
 }
 
@@ -275,7 +275,7 @@ template <class T, unsigned SIZE>
 T CVector<T,SIZE>::operator * (const CVector<T, SIZE> & vec)
 {
     T d = T(0);
-    for (int i=0; i<SIZE; i++) d += m_atData[i]*vec(i);
+    for (unsigned i=0; i<SIZE; i++) d += m_atData[i]*vec(i);
     return d;
 }
 
@@ -297,8 +297,8 @@ template <class T, unsigned SIZE>
 CVector<T, SIZE> CVector<T,SIZE>::operator * (const CMatrix<T, SIZE> &mat)
 {
     CVector<T, SIZE> vec;
-    for (int j=0; j<SIZE; j++)
-        for (int i=0; i<SIZE; i++)
+    for (unsigned j=0; j<SIZE; j++)
+        for (unsigned i=0; i<SIZE; i++)
             vec(j) += m_atData[i]*mat(i,j);
     return vec;
 }
@@ -337,7 +337,7 @@ template <class T, unsigned SIZE>
 void CVector<T,SIZE>::print(std::string name) const
 {
     std::cout << name << " = (";
-    for (int i=0; i<SIZE; i++) {
+    for (unsigned i=0; i<SIZE; i++) {
         std::cout << m_atData[i];
         if (i<SIZE-1) std::cout << ", ";
         else          std::cout << ")\n";
