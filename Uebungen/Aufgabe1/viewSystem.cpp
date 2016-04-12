@@ -262,6 +262,7 @@ CMat4f viewSystem::getWorldToViewTransformMatrix()
 {
     // AUFGABE01
     return getViewToWorldTransformMatrix().getTransposed();
+    //return Inverse(getViewToWorldTransformMatrix());
 }
 
 CMat4f viewSystem::RotationMatrix(CVec4f axis, float angle)
@@ -321,4 +322,25 @@ CMat4f viewSystem::RotationMatrix(CVec4f axis, float angle)
     }
 
     return Rot;
+}
+
+CMat4f viewSystem::getInverse(CMat4f M)
+// Berechnet die Inverse einer 4x4 Matrix M der Art
+//             | A T |
+//             | 0 1 |
+// mit einer orthonormalen 3x3 Matrix A.
+// Die Inverse ist dann gegeben durch
+//             | A^T -A^t*T |
+//             |  0     1   |
+{
+    float Mat[4][4];
+    CVec4f a;
+    for (int i=0; i<4; i++) for (int j=0; j<4; j++) Mat[i][j]=M(i,j);
+    for (int i=0; i<3; i++) { Mat[i][3]=0; a(i)=M(i,3); }
+    for (int i=0; i<3; i++) for (int j=0; j<i; j++) { float x=Mat[i][j]; Mat[i][j]=Mat[j][i]; Mat[j][i]=x; }
+    CMat4f tmp(Mat);
+    a = tmp*a;
+    for (int i=0; i<3; i++) tmp(i,3)=-a(i);
+
+    return tmp;
 }
