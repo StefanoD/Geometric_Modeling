@@ -33,6 +33,8 @@ public:
     CMatrix<T, SIZE> operator * (const CMatrix<T, SIZE> &mat);
     CVector<T, SIZE> operator * (const CVector<T, SIZE> &vec);
 
+    CMatrix<T, SIZE> getTransposed();
+
     // output
     void print(std::string name= "v") const;
 private:
@@ -41,13 +43,13 @@ private:
 };
 
 // some common vector classes (abbr. names)
-typedef CMatrix<float, 2> CMat2f;
-typedef CMatrix<float, 3> CMat3f;
-typedef CMatrix<float, 4> CMat4f;
+typedef CMatrix<float, 2u> CMat2f;
+typedef CMatrix<float, 3u> CMat3f;
+typedef CMatrix<float, 4u> CMat4f;
 
-typedef CMatrix<double, 2> CMat2d;
-typedef CMatrix<double, 3> CMat3d;
-typedef CMatrix<double, 4> CMat4d;
+typedef CMatrix<double, 2u> CMat2d;
+typedef CMatrix<double, 3u> CMat3d;
+typedef CMatrix<double, 4u> CMat4d;
 
 
 template <class T, unsigned SIZE>
@@ -151,6 +153,20 @@ void CMatrix<T, SIZE>::print(std::string name) const
         }
     }
     std::cout << "\n";
+}
+
+template <class T, unsigned SIZE>
+CMatrix<T, SIZE>  CMatrix<T, SIZE>::getTransposed()
+{
+    CMatrix<T, SIZE> transposedMatrix;
+
+    for (unsigned i = 0; i < SIZE; ++i) {
+        for (unsigned j = 0; j < SIZE; ++j) {
+            transposedMatrix(j, i) = m_aatData[i][j];
+        }
+    }
+
+    return transposedMatrix;
 }
 
 
