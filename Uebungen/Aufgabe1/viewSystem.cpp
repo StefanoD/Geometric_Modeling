@@ -261,8 +261,8 @@ CMat4f viewSystem::getViewToWorldTransformMatrix()
 CMat4f viewSystem::getWorldToViewTransformMatrix()
 {
     // AUFGABE01
-    return getViewToWorldTransformMatrix().getTransposed();
-    //return Inverse(getViewToWorldTransformMatrix());
+    //return getViewToWorldTransformMatrix().getTransposed();
+    return getInverse(getViewToWorldTransformMatrix());
 }
 
 CMat4f viewSystem::RotationMatrix(CVec4f axis, float angle)

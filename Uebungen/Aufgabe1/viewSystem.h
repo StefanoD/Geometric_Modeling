@@ -19,7 +19,7 @@ private:
     CVec4f     ViewHor; // the view horizon: ViewDir x ViewUp
     MatrixMode RotMode; // Rotation mode: matrix multiplication, matrix formula, quaternions
 
-    CMat4f Inverse(CMat4f M);
+    CMat4f getInverse(CMat4f M);
     CMat4f RotationMatrix(CVec4f axis, float angle);
 
 public:
