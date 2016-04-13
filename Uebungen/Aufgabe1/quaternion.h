@@ -1,8 +1,3 @@
-////////////////////////////////////////////////////////////////////
-//
-//	Georg Umlauf, (c) 2012
-//
-////////////////////////////////////////////////////////////////////
 #ifndef _QUATERNION_H_
 #define _QUATERNION_H_
 
@@ -14,11 +9,14 @@ private:
 
 public:
     // constructors/destructors
-    Quaternion();									// default constructor
+    Quaternion();
+    Quaternion(CVec4f homogenizedVector);
     ~Quaternion();
 
-    Quaternion operator * (const Quaternion &quat);
+    Quaternion operator * (const Quaternion &q2);
 
+    float &operator ()(unsigned i);
+    float operator () (unsigned i) const;
 };
 
 
