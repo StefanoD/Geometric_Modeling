@@ -128,6 +128,9 @@ void viewSystem::RotateZ(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
+            CVec4f zAxis(0, 0, 1, 0);
+            Quaternion Rot(cos(angle / 2), zAxis * sin(angle / 2));
+            Rotate(Rot);
             break;
         }
     }
@@ -143,6 +146,12 @@ void viewSystem::RotateDir(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
+            Quaternion qDir(cos(angle / 2), ViewDir * sin(angle / 2));
+            Quaternion qUp(0, ViewUp);
+
+            qUp = qUp.rotate(qDir);
+
+            ViewUp = qUp.toVector();
             break;
         }
     }
