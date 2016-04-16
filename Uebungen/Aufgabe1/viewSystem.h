@@ -46,7 +46,7 @@ public:
     void RotateHor(             float angle);	// rotate around ViewHor
     void Rotate   (CVec4f axis, float angle);	// rotate around arbitrary axis
     void Rotate   (CMat4f mat              );	// rotate by rotation matrix mat
-    void Rotate   (Quaternion quat         );	// rotate by quaternion quat
+    void Rotate   (Quaternion &quatRot);    	// rotate by rotation quaternion quat
     void Translate(CVec4f vec              );	// translate by vec
 
     // projection methods (in the view system coordinates)

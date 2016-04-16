@@ -100,6 +100,9 @@ void viewSystem::RotateY(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
+            //CVec4f(0, 1, 0, 0))
+            Quaternion quatRot(cos(angle / 2), CVec4f(0, sin(angle / 2), 0, 0));
+            Rotate(quatRot);
             break;
         }
     }
@@ -189,6 +192,25 @@ void viewSystem::Rotate(CMat4f mat)
     EyePoint = mat * EyePoint;
     ViewDir  = mat * ViewDir;
     ViewUp   = mat * ViewUp;
+
+    ViewDir.normalize();
+    ViewUp .normalize();
+}
+
+
+void viewSystem::Rotate(Quaternion &quatRot)
+{
+    Quaternion quatEyePoint(0, EyePoint);
+    Quaternion quatViewDir (0, ViewDir);
+    Quaternion quatViewUp  (0, ViewUp);
+
+    quatEyePoint = quatEyePoint.rotate(quatRot);
+    quatViewDir  = quatViewDir.rotate(quatRot);
+    quatViewUp   = quatViewUp.rotate(quatRot);
+
+    EyePoint = quatEyePoint.toPoint();
+    ViewDir  = quatViewDir.toVector();
+    ViewUp   = quatViewUp.toVector();
 
     ViewDir.normalize();
     ViewUp .normalize();
