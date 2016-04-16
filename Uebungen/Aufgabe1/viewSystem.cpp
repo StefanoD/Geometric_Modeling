@@ -100,8 +100,9 @@ void viewSystem::RotateY(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
-            //CVec4f(0, 1, 0, 0))
-            Quaternion quatRot(cos(angle / 2), CVec4f(0, sin(angle / 2), 0, 0));
+            // Skript S. 2-51
+            CVec4f xAxis(0, 1, 0, 0);
+            Quaternion quatRot(cos(angle / 2), xAxis * sin(angle / 2));
             Rotate(quatRot);
             break;
         }
@@ -158,6 +159,12 @@ void viewSystem::RotateUp(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
+            Quaternion qUp(cos(angle / 2), ViewUp * sin(angle / 2));
+            Quaternion qDir(0, ViewDir);
+
+            qDir = qDir.rotate(qUp);
+
+            ViewDir = qDir.toVector();
             break;
         }
     }
@@ -180,6 +187,16 @@ void viewSystem::RotateHor(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
+            // Skript S. 2-51
+            Quaternion qHor(cos(angle / 2), ViewHor * sin(angle / 2));
+            Quaternion qDir(0, ViewDir);
+            Quaternion qUp(0, ViewUp);
+
+            qDir = qDir.rotate(qHor);
+            qUp = qUp.rotate(qHor);
+
+            ViewDir = qDir.toVector();
+            ViewUp = qUp.toVector();
             break;
         }
     }

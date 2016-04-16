@@ -63,7 +63,7 @@ Quaternion Quaternion::getConjunction()
 Quaternion Quaternion::rotate(Quaternion &qRotation)
 {
     // Skripte, S. 2-51: q * (0, p) * q'
-    // Da die Axe vorher normiert wurde, ist die Konjugierte die Inverse.
+    // Da die Axe (qRotation) vorher normiert wurde, ist die Konjugierte die Inverse.
     return qRotation * (*this) * qRotation.getConjunction();
 }
 
