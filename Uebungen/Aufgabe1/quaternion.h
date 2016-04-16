@@ -15,7 +15,6 @@ public:
 
     Quaternion operator * (const Quaternion &q2);
 
-    Quaternion getInverse();
     Quaternion getConjunction();
 
     void rotate(Quaternion &q2);

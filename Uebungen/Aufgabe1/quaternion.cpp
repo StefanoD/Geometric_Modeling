@@ -35,23 +35,6 @@ Quaternion Quaternion::operator *(const Quaternion &q2)
     return q;
 }
 
-Quaternion Quaternion::getInverse()
-{
-    // http://www.iti.fh-flensburg.de/lang/algorithmen/grundlagen/quat.htm
-
-    // Quadratische Norm vom Quaternion
-    double norm2 = x[0] * x[0] + x[1] * x[1] + x[2] + x[2] + x[3] * x[3];
-
-    Quaternion inverse = getConjunction();
-
-    inverse(0) = inverse(0) / norm2;
-    inverse(1) = inverse(1) / norm2;
-    inverse(2) = inverse(2) / norm2;
-    inverse(3) = inverse(3) / norm2;
-
-    return inverse;
-}
-
 float &Quaternion::operator ()(unsigned i)
 {
     return x[i];
