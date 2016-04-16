@@ -10,10 +10,15 @@ private:
 public:
     // constructors/destructors
     Quaternion();
-    Quaternion(CVec4f homogenizedVector);
+    Quaternion(const float s, const CVec4f vector);
     ~Quaternion();
 
     Quaternion operator * (const Quaternion &q2);
+
+    Quaternion getInverse();
+    Quaternion getConjunction();
+
+    void rotate(Quaternion &q2);
 
     float &operator ()(unsigned i);
     float operator () (unsigned i) const;

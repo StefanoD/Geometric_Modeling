@@ -1,11 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////
-//
-//	Georg Umlauf, (c) 2012
-//
-////////////////////////////////////////////////////////////////////
-
-//#include "stdafx.h"
-#include "quaternion.h"
+﻿#include "quaternion.h"
 #include "math.h"
 #include <iostream>
 
@@ -14,12 +7,12 @@ Quaternion::Quaternion()
     for (int i=0; i<4; ++i) x[i]=0;
 }
 
-Quaternion::Quaternion(CVec4f homogenizedVector)
+Quaternion::Quaternion(const float s, const CVec4f vector)
 {
-    x[0] = 0;
-    x[1] = homogenizedVector(0);
-    x[2] = homogenizedVector(1);
-    x[3] = homogenizedVector(2);
+    x[0] = s;
+    x[1] = vector(0);
+    x[2] = vector(1);
+    x[3] = vector(2);
 }
 
 Quaternion::~Quaternion()
@@ -42,6 +35,23 @@ Quaternion Quaternion::operator *(const Quaternion &q2)
     return q;
 }
 
+Quaternion Quaternion::getInverse()
+{
+    // http://www.iti.fh-flensburg.de/lang/algorithmen/grundlagen/quat.htm
+
+    // Quadratische Norm vom Quaternion
+    double norm2 = x[0] * x[0] + x[1] * x[1] + x[2] + x[2] + x[3] * x[3];
+
+    Quaternion inverse = getConjunction();
+
+    inverse(0) = inverse(0) / norm2;
+    inverse(1) = inverse(1) / norm2;
+    inverse(2) = inverse(2) / norm2;
+    inverse(3) = inverse(3) / norm2;
+
+    return inverse;
+}
+
 float &Quaternion::operator ()(unsigned i)
 {
     return x[i];
@@ -50,4 +60,31 @@ float &Quaternion::operator ()(unsigned i)
 float Quaternion::operator ()(unsigned i) const
 {
     return x[i];
+}
+
+
+// Wenn Quaternion Betrag 1 hat, dann ist die Konjugierte gleich die Inverse
+Quaternion Quaternion::getConjunction()
+{
+    Quaternion conjunction;
+
+    // http://www.iti.fh-flensburg.de/lang/algorithmen/grundlagen/quat.htm
+    conjunction(0) = x[0];
+    conjunction(1) = -x[1];
+    conjunction(2) = -x[2];
+    conjunction(3) = -x[3];
+
+    return conjunction;
+}
+
+void Quaternion::rotate(Quaternion &qAxis)
+{
+    // Skripte, S. 2-51: q * (0, p) * q'
+    // Da die Axe vorher normiert wurde, ist die Konjugierte die Inverse.
+    const Quaternion rotatedQuatVec = qAxis * (*this) * qAxis.getConjunction();
+
+    x[0] = 0;
+    x[1] = rotatedQuatVec(1);
+    x[2] = rotatedQuatVec(2);
+    x[3] = rotatedQuatVec(3);
 }
