@@ -60,19 +60,19 @@ Quaternion Quaternion::getConjunction()
     return conjunction;
 }
 
-void Quaternion::rotate(Quaternion &qAxis)
+Quaternion Quaternion::rotate(Quaternion &qRotation)
 {
     // Skripte, S. 2-51: q * (0, p) * q'
     // Da die Axe vorher normiert wurde, ist die Konjugierte die Inverse.
-    const Quaternion rotatedQuatVec = qAxis * (*this) * qAxis.getConjunction();
-
-    x[0] = 0;
-    x[1] = rotatedQuatVec(1);
-    x[2] = rotatedQuatVec(2);
-    x[3] = rotatedQuatVec(3);
+    return qRotation * (*this) * qRotation.getConjunction();
 }
 
 CVec4f Quaternion::toVector()
 {
     return CVec4f(x[1], x[2], x[3], 0);
+}
+
+CVec4f Quaternion::toPoint()
+{
+    return CVec4f(x[1], x[2], x[3], 1);
 }
