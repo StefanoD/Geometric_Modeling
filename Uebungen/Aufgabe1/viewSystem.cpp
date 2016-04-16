@@ -77,6 +77,9 @@ void viewSystem::RotateX(float angle)
     case VIEW_QUATERNION_MODE:
         {
             // AUFGABE02
+            CVec4f xAxis(1, 0, 0, 0);
+            Quaternion Rot(cos(angle / 2), xAxis * sin(angle / 2));
+            Rotate(Rot);
             break;
         }
     }
@@ -101,8 +104,8 @@ void viewSystem::RotateY(float angle)
         {
             // AUFGABE02
             // Skript S. 2-51
-            CVec4f xAxis(0, 1, 0, 0);
-            Quaternion quatRot(cos(angle / 2), xAxis * sin(angle / 2));
+            CVec4f yAxis(0, 1, 0, 0);
+            Quaternion quatRot(cos(angle / 2), yAxis * sin(angle / 2));
             Rotate(quatRot);
             break;
         }
