@@ -18,6 +18,7 @@ public:
     Quaternion getConjunction();
 
     void rotate(Quaternion &q2);
+    CVec4f toVector();
 
     float &operator ()(unsigned i);
     float operator () (unsigned i) const;

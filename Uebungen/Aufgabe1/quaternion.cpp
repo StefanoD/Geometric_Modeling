@@ -71,3 +71,8 @@ void Quaternion::rotate(Quaternion &qAxis)
     x[2] = rotatedQuatVec(2);
     x[3] = rotatedQuatVec(3);
 }
+
+CVec4f Quaternion::toVector()
+{
+    return CVec4f(x[1], x[2], x[3], 0);
+}
