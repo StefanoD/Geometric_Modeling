@@ -263,6 +263,20 @@ void viewSystem::Translate(CVec4f vec)
     EyePoint += vec;
 }
 
+void viewSystem::SLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
+{
+    const double angle = acos(startPoint * endPoint) * (1.0 / (startPoint.norm() * endPoint.norm()));
+
+    const double leftTerm = sin(1 - relativeStep) * angle / sin(angle);
+    const double rightTerm = sin(relativeStep) * angle / sin(angle);
+
+    ViewUp(0) = leftTerm * startPoint(0) + rightTerm * endPoint(0);
+    ViewUp(1) = leftTerm * startPoint(1) + rightTerm * endPoint(1);
+    ViewUp(2) = leftTerm * startPoint(2) + rightTerm * endPoint(2);
+
+    ViewUp.normalize();
+}
+
 CVec4f viewSystem::Project(CVec4f Point)
 {	// central projection of Point
     CMat4f M;

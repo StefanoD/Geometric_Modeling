@@ -47,6 +47,7 @@ const int g_iHeight = 500; // window height (choose an appropriate size)
 // private, global variables ... replace by your own ones
 viewSystem view;
 Quader Q1,Q2,Q3;
+float relativeStep;
 //
 /////////////////////////////////////////////////////////////
 
@@ -61,6 +62,8 @@ void init ()
     Q1.setData(CVec4f( -25, -25, -25, 1),CVec4f(  25,  25,  25, 1));
     Q2.setData(CVec4f(   0,   0,   0, 1),CVec4f( 100, 100, 100, 1));
     Q3.setData(CVec4f(-155, -55, -75, 1),CVec4f( -90,  50,  50, 1));
+
+    relativeStep = 0.1;
 }
 
 void initGL ()
@@ -97,6 +100,9 @@ void keyboard (unsigned char key, int x, int y)
 {
     float  angle=0.05;
     CVec4f Translation;
+
+    CVec4f startPoint(1, 1, 1, 0);
+    CVec4f endPoint(0, -1, 0, 0);
 
     switch (key) {
         case 'f':
@@ -170,6 +176,14 @@ void keyboard (unsigned char key, int x, int y)
         case 'w':
             Translation(2) = -3;
             view.Translate(Translation);
+            break;
+        case '1':
+            if (relativeStep <= 1) {
+                std::cout << "Spherical linear interpolation (SLERP) with relative step: " << relativeStep << std::endl;
+
+                relativeStep += 0.1;
+                view.SLERP_UP(startPoint, endPoint, relativeStep);
+            }
             break;
 
         // Reset
