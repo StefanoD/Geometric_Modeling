@@ -179,13 +179,28 @@ void keyboard (unsigned char key, int x, int y)
             break;
         case '1':
             if (relativeStep <= 1) {
-                std::cout << "Spherical linear interpolation (SLERP) with relative step: " << relativeStep << std::endl;
+                std::cout << "Linear Interpolation (LERP) with relative step: " << relativeStep << std::endl;
+
+                relativeStep += 0.1;
+                view.LERP_UP(startPoint, endPoint, relativeStep);
+            }
+        break;
+        case '2':
+            if (relativeStep <= 1) {
+                std::cout << "Spherical Linear Interpolation (SLERP) with relative step: " << relativeStep << std::endl;
 
                 relativeStep += 0.1;
                 view.SLERP_UP(startPoint, endPoint, relativeStep);
             }
             break;
+        case '3':
+            if (relativeStep <= 1) {
+                std::cout << "Spherical Linear Interpolation (SLERP) with relative step: " << relativeStep << std::endl;
 
+                relativeStep += 0.1;
+                view.NSLERP_UP(startPoint, endPoint, relativeStep);
+            }
+        break;
         // Reset
         case 'r':
             init();

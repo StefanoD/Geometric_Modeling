@@ -277,6 +277,27 @@ void viewSystem::SLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relati
     ViewUp.normalize();
 }
 
+void viewSystem::NSLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
+{
+    // Normalized SLERP
+    startPoint.normalize();
+    endPoint.normalize();
+    SLERP_UP(startPoint, endPoint, relativeStep);
+}
+
+void viewSystem::LERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
+{
+    // Liniear Interpolation
+    // https://en.wikipedia.org/wiki/Linear_interpolation#Programming_language_support
+    //(1-t)*v0 + t*v1
+
+    ViewUp(0) = (1 - relativeStep) * startPoint(0) + relativeStep * endPoint(0);
+    ViewUp(1) = (1 - relativeStep) * startPoint(1) + relativeStep * endPoint(1);
+    ViewUp(2) = (1 - relativeStep) * startPoint(2) + relativeStep * endPoint(2);
+
+    ViewUp.normalize();
+}
+
 CVec4f viewSystem::Project(CVec4f Point)
 {	// central projection of Point
     CMat4f M;
