@@ -48,9 +48,9 @@ public:
     void Rotate   (CMat4f mat              );	// rotate by rotation matrix mat
     void Rotate   (Quaternion &quatRot);    	// rotate by rotation quaternion quat
     void Translate(CVec4f vec              );	// translate by vec
-    void LERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep);
-    void SLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep);
-    void NSLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep);
+    void lerpUp(CVec4f startPoint, CVec4f endPoint, const float relativeStep);
+    void slerpUp(CVec4f startPoint, CVec4f endPoint, const float relativeStep);
+    void nslerpUP(CVec4f startPoint, CVec4f endPoint, const float relativeStep);
 
     // projection methods (in the view system coordinates)
     CVec4f Project(CVec4f Point); // projection in the view system coordinates

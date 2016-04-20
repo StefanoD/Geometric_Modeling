@@ -263,7 +263,7 @@ void viewSystem::Translate(CVec4f vec)
     EyePoint += vec;
 }
 
-void viewSystem::SLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
+void viewSystem::slerpUp(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
 {
     const double angle = acos(startPoint * endPoint) * (1.0 / (startPoint.norm() * endPoint.norm()));
 
@@ -277,15 +277,15 @@ void viewSystem::SLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relati
     ViewUp.normalize();
 }
 
-void viewSystem::NSLERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
+void viewSystem::nslerpUP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
 {
     // Normalized SLERP
     startPoint.normalize();
     endPoint.normalize();
-    SLERP_UP(startPoint, endPoint, relativeStep);
+    slerpUp(startPoint, endPoint, relativeStep);
 }
 
-void viewSystem::LERP_UP(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
+void viewSystem::lerpUp(CVec4f startPoint, CVec4f endPoint, const float relativeStep)
 {
     // Liniear Interpolation
     // https://en.wikipedia.org/wiki/Linear_interpolation#Programming_language_support

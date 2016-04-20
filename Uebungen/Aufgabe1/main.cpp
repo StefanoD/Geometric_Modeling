@@ -182,7 +182,7 @@ void keyboard (unsigned char key, int x, int y)
                 std::cout << "LERP with relative step: " << relativeStep << std::endl;
 
                 relativeStep += 0.1;
-                view.LERP_UP(startPoint, endPoint, relativeStep);
+                view.lerpUp(startPoint, endPoint, relativeStep);
             }
         break;
         case '2':
@@ -190,7 +190,7 @@ void keyboard (unsigned char key, int x, int y)
                 std::cout << "SLERP with relative step: " << relativeStep << std::endl;
 
                 relativeStep += 0.1;
-                view.SLERP_UP(startPoint, endPoint, relativeStep);
+                view.slerpUp(startPoint, endPoint, relativeStep);
             }
             break;
         case '3':
@@ -198,7 +198,7 @@ void keyboard (unsigned char key, int x, int y)
                 std::cout << "NSLERP with relative step: " << relativeStep << std::endl;
 
                 relativeStep += 0.1;
-                view.NSLERP_UP(startPoint, endPoint, relativeStep);
+                view.nslerpUP(startPoint, endPoint, relativeStep);
             }
         break;
         // Reset
