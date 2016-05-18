@@ -10,6 +10,7 @@ public:
     void  addPoint (float x, float y);
     float getPointX(int   i);
     float getPointY(int   i);
+    QPointF getPoint(int  i);
     void  setPointX(int   i, float x);
     void  setPointY(int   i, float y);
     int   getCount ();

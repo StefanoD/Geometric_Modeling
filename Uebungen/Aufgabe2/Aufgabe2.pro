@@ -20,11 +20,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
         points.cpp \
-        glwidget.cpp
+        glwidget.cpp \
+    bezier_calc.cpp
 
 
 HEADERS  += mainwindow.h \
             points.h \
-            glwidget.h
+            glwidget.h \
+    bezier_calc.h
 
 FORMS    += mainwindow.ui

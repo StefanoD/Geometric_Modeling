@@ -16,7 +16,12 @@ float Points::getPointX(int i)
 
 float Points::getPointY(int i)
 {
-    return pointlist[i].y();
+  return pointlist[i].y();
+}
+
+QPointF Points::getPoint(int i)
+{
+  return pointlist[i];
 }
 
 void Points::setPointX(int i, float x)
