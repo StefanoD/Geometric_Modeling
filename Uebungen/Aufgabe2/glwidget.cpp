@@ -109,7 +109,7 @@ GLWidget::calcBezierCurve()
     bezierPoints.append(BezierCalc::deCasteljau(controllPoints2, t, degree));
   }
 
-  // Add last point. (b_0)^n = last controll point.
+  // Add last point. (b_0)^n is the last controll point for t = 1.
 
   bezierPoints.append(controllPoints2[degree]);
 
