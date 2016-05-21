@@ -13,7 +13,7 @@ public:
                                     const int degree,
                                     const double parameter);
 
-    static QPointF deCasteljau(Points &points, const double t,
+    static QPointF deCasteljau(QList<QPointF> &points, const double t,
                                const int degree, const int index = 0);
 
     static double calcPointOnBezierCurve(Points &points, const double t);

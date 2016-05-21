@@ -19,9 +19,7 @@ public slots:
 
 protected:
     void paintGL              ();
-    void plotBezierCurve      (const int bezierPointStart,
-                               const int bezierPointEnd,
-                               const int degree);
+    QList<QPointF> calcBezierCurve();
     void initializeGL         ();
     void resizeGL             (int width, int height);
     void mouseMoveEvent       (QMouseEvent *event);
@@ -30,6 +28,8 @@ protected:
 
 private:
     QPointF transformPosition(QPoint p);
+    QList<QPointF> getControllPoints1();
+    QList<QPointF> getControllPoints2();
     Points  points;
     float   aspectx, aspecty;
     float   epsilon_draw, epsilon_intersection;

@@ -5,6 +5,8 @@
 
 #include "mainwindow.h"
 
+#include "bezier_calc.h"
+
 GLWidget::GLWidget(QWidget* parent)
   : QGLWidget(parent)
 {
@@ -72,7 +74,15 @@ GLWidget::paintGL()
   glColor3f(1.0, 1.0, 1.0);
   // AUFGABE: Hier Kurve zeichnen
   // dabei epsilon_draw benutzen
-  plotBezierCurve(0, points.getCount(), 3);
+  QList<QPointF> curve1 = calcBezierCurve();
+
+  glColor3f(1.0, 1.0, 0.0);
+  glBegin(GL_LINE_STRIP);
+
+  for (QPointF point : curve1) {
+    glVertex2f(point.x(), point.y());
+  }
+  glEnd();
 
   // Schnittpunkte zeichnen
   if (doIntersection) {
@@ -87,18 +97,23 @@ GLWidget::paintGL()
   }
 }
 
-void
-GLWidget::plotBezierCurve(const int bezierPointStart,
-                          const int bezierPointEnd,
-                          const int degree)
+QList<QPointF>
+GLWidget::calcBezierCurve()
 {
-  for (int i = bezierPointStart; i < bezierPointEnd; ++i) {
-      if (degree == 0) {
-          // Draw Polygon
-      } else {
-          // Berechnen des zusammengesetzten Polygons
-      }
+  QList<QPointF> controllPoints2 = getControllPoints2();
+  const int degree = controllPoints2.count() - 1;
+
+  QList<QPointF> bezierPoints;
+
+  for (float t = 0.0; t < 1.0; t += epsilon_draw) {
+    bezierPoints.append(BezierCalc::deCasteljau(controllPoints2, t, degree));
   }
+
+  // Add last point. (b_0)^n = last controll point.
+
+  bezierPoints.append(controllPoints2[degree]);
+
+  return bezierPoints;
 }
 
 void
@@ -134,6 +149,30 @@ GLWidget::transformPosition(QPoint p)
 {
   return QPointF((2.0 * p.x() / width() - 1.0) * aspectx,
                  -(2.0 * p.y() / height() - 1.0) * aspecty);
+}
+
+QList<QPointF>
+GLWidget::getControllPoints1()
+{
+  QList<QPointF> controllPoints1;
+
+  for (int i = 0; i < 5; ++i) {
+    controllPoints1.append(points.getPoint(i));
+  }
+
+  return controllPoints1;
+}
+
+QList<QPointF>
+GLWidget::getControllPoints2()
+{
+  QList<QPointF> controllPoints2;
+
+  for (int i = 5; i < points.getCount(); ++i) {
+    controllPoints2.append(points.getPoint(i));
+  }
+
+  return controllPoints2;
 }
 
 void

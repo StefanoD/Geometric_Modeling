@@ -9,13 +9,13 @@ int
 main(int argc, char* argv[])
 {
   // Test BEGIN slide 5-22
-  Points  points;
-  points.addPoint(0.0, 0.0);
-  points.addPoint(2, 4.5);
-  points.addPoint(8.5, 6.5);
-  points.addPoint(11.0, 2.0);
+  QList<QPointF>  points;
+  points.append(QPointF(0.0, 0.0));
+  points.append(QPointF(2, 4.5));
+  points.append(QPointF(8.5, 6.5));
+  points.append(QPointF(11.0, 2.0));
 
-  QPointF result = BezierCalc::deCasteljau(points, 0.6, points.getCount() - 1);
+  QPointF result = BezierCalc::deCasteljau(points, 0.6, points.count() - 1);
 
   std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
   // Test END
