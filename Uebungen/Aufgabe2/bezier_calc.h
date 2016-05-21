@@ -7,21 +7,8 @@ class QPointF;
 class BezierCalc
 {
 public:
-    BezierCalc();
-
-    static double calcBernsteinPolynom(const int index,
-                                    const int degree,
-                                    const double parameter);
-
-    static QPointF deCasteljau(QList<QPointF> &points, const double t,
-                               const int degree, const int index = 0);
-
-    static double calcPointOnBezierCurve(Points &points, const double t);
-
-private:
-
-    // Returns value of Binomial Coefficient C(n, k)
-    static int calcBinomialCoeff(int n, int k);
+  static QPointF deCasteljau(QList<QPointF>& points, const double t,
+                             const int degree, const int index = 0);
 };
 
 #endif // BEZIERCALC_H
