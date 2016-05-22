@@ -1,10 +1,8 @@
 #ifndef BEZIERCALC_H
 #define BEZIERCALC_H
 
-class QPointF;
-
-template <typename T>
-class QList;
+#include <QPointF>
+#include <QList>
 
 class BezierCalc
 {
@@ -30,6 +28,11 @@ public:
 
   static void splitIntoHalf(const QList<QPointF>& source, QList<QPointF>& left,
                             QList<QPointF>& right);
+
+  static bool boundingBoxesIntersects(QList<QPointF>& bezier1,
+                                      QList<QPointF>& bezier2);
+
+  static void getMinMax(QList<QPointF>& bezier, QPointF& min, QPointF& max);
 
 private:
   static void calcBezierCurvePolar(const QList<QPointF>& controllPoints,

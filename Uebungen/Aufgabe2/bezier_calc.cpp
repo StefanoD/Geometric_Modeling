@@ -1,8 +1,6 @@
 #include "bezier_calc.h"
 #include <cmath>
 #include <vector>
-#include <QPointF>
-#include <QList>
 #include "points.h"
 
 QPointF
@@ -113,6 +111,45 @@ BezierCalc::splitIntoHalf(const QList<QPointF>& source, QList<QPointF>& left,
     } else {
       right.append(source[i]);
     }
+  }
+}
+
+bool
+BezierCalc::boundingBoxesIntersects(QList<QPointF>& bezier1,
+                                    QList<QPointF>& bezier2)
+{
+  QPointF bezier1Min;
+  QPointF bezier1Max;
+
+  QPointF bezier2Min;
+  QPointF bezier2Max;
+
+  getMinMax(bezier1, bezier1Min, bezier1Max);
+  getMinMax(bezier2, bezier2Min, bezier2Max);
+
+  return bezier1Min.x() < bezier2Max.x() && bezier1Max.x() > bezier2Min.x() &&
+         bezier1Min.y() < bezier2Max.y() && bezier1Max.y() > bezier2Min.y();
+}
+
+void
+BezierCalc::getMinMax(QList<QPointF>& bezier, QPointF& min, QPointF& max)
+{
+  max.rx() = -255;
+  max.ry() = -255;
+
+  min.rx() = 255;
+  min.ry() = 255;
+
+  for (auto& point : bezier) {
+    if (point.x() < min.rx())
+      min.rx() = point.x();
+    if (point.y() < min.ry())
+      min.ry() = point.y();
+
+    if (point.x() > max.rx())
+      max.rx() = point.x();
+    if (point.y() > max.ry())
+      max.ry() = point.y();
   }
 }
 

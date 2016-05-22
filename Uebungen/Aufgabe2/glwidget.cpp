@@ -76,15 +76,26 @@ GLWidget::paintGL()
   glColor3f(1.0, 1.0, 1.0);
   // AUFGABE: Hier Kurve zeichnen
   // dabei epsilon_draw benutzen
+  /*
+    QList<QPointF> controllPoints2 = getControllPoints2();
+    const int degree = controllPoints2.count() - 1;
 
-  QList<QPointF>  controllPoints2 = getControllPoints2();
-  const int degree = controllPoints2.count() - 1;
+    glColor3f(1.0, 1.0, 0.0);
+    glBegin(GL_LINE_STRIP);
+
+    calcBezierCurvePolar(controllPoints2, degree, epsilon_draw);
+
+    glEnd();*/
+
+  QList<QPointF> curve2 =
+    BezierCalc::calcBezierCurveSimple(getControllPoints2(), epsilon_draw);
 
   glColor3f(1.0, 1.0, 0.0);
   glBegin(GL_LINE_STRIP);
 
-  calcBezierCurvePolar(controllPoints2, degree, epsilon_draw);
-
+  for (QPointF point : curve2) {
+    glVertex2f(point.x(), point.y());
+  }
   glEnd();
 
   QList<QPointF> curve1 =
@@ -103,6 +114,7 @@ GLWidget::paintGL()
     glColor3f(0.0, 1.0, 0.0);
     // AUFGABE: Hier Schnitte zeichnen
     // dabei epsilon_intersection benutzen
+    intersectBezier(curve1, curve2);
   }
   if (doSelfIntersection) {
     glColor3f(1.0, 0.0, 1.0);
@@ -173,12 +185,9 @@ GLWidget::getControllPoints2()
 void
 GLWidget::plotBezier(QList<QPointF>& _points)
 {
-  //std::sort(_points.begin(), _points.end(), less_than_key());
-
   for (const QPointF& point : _points) {
     glVertex2f(point.x(), point.y());
   }
-
 }
 
 void
@@ -212,8 +221,8 @@ GLWidget::mouseDoubleClickEvent(QMouseEvent*)
 }
 
 void
-GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints,
-                               const int degree, const double epsilon)
+GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints, const int degree,
+                               const double epsilon)
 {
   const double t = 0.5;
   const QPointF maxDist = BezierCalc::getMaxForwardDistance(controllPoints);
@@ -221,7 +230,8 @@ GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints,
   if (degree == 0 || (maxDist.x() < epsilon && maxDist.y() < epsilon)) {
     plotBezier(controllPoints);
   } else {
-    const QList<QPointF> curvePoints = BezierCalc::deCasteljauPolarForm(controllPoints, t);
+    const QList<QPointF> curvePoints =
+      BezierCalc::deCasteljauPolarForm(controllPoints, t);
     QList<QPointF> leftHalf;
     QList<QPointF> rightHalf;
 
@@ -229,6 +239,62 @@ GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints,
 
     calcBezierCurvePolar(leftHalf, degree - 1, epsilon);
     calcBezierCurvePolar(rightHalf, degree - 1, epsilon);
+  }
+}
+
+void
+GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
+{
+  if (BezierCalc::boundingBoxesIntersects(bezier1, bezier2)) {
+    const double t = 0.5;
+
+    int m = bezier1.count();
+    int n = bezier2.count();
+
+    const QPointF maxDistB1 = BezierCalc::getMaxForwardDistance(bezier1);
+    const QPointF maxDistB2 = BezierCalc::getMaxForwardDistance(bezier2);
+
+    if ((m * (m - 1) * maxDistB1.x()) > epsilon_intersection &&
+        (m * (m - 1) * maxDistB1.y()) > epsilon_intersection) {
+
+      const QList<QPointF> curvePoints =
+        BezierCalc::deCasteljauPolarForm(bezier1, t);
+
+      QList<QPointF> leftHalf, rightHalf;
+
+      BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
+
+      intersectBezier(leftHalf, bezier2);
+      intersectBezier(rightHalf, bezier2);
+    } else if (((n * (n - 1) * maxDistB2.x()) > epsilon_intersection) &&
+               ((n * (n - 1) * maxDistB2.y()) > epsilon_intersection)) {
+
+      const QList<QPointF> curvePoints =
+        BezierCalc::deCasteljauPolarForm(bezier2, t);
+
+      QList<QPointF> leftHalf, rightHalf;
+
+      BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
+
+      intersectBezier(bezier1, leftHalf);
+      intersectBezier(bezier1, rightHalf);
+    } else {
+      const QLineF line1 =
+        QLineF(bezier1[0], bezier1[bezier1.count() - 1]);
+      const  QLineF line2 =
+        QLineF(bezier2[0], bezier2[bezier2.count() - 1]);
+
+      QPointF intersection;
+      const QLineF::IntersectType intersectioType = line1.intersect(line2, &intersection);
+
+      if (intersectioType == QLineF::BoundedIntersection) {
+        glPointSize(7.0);
+        glBegin(GL_POINTS);
+        glColor3f(0.0, 1.0, 0.0);
+        glVertex2f(intersection.x(), intersection.y());
+        glEnd();
+      }
+    }
   }
 }
 
