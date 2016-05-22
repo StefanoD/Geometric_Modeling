@@ -120,6 +120,8 @@ GLWidget::paintGL()
     glColor3f(1.0, 0.0, 1.0);
     // AUFGABE: Hier Selbstschnitte zeichnen
     // dabei epsilon_intersection benutzen
+    intersectBezier(curve1, curve1);
+    // intersectBezier(curve2, curve2);
   }
 }
 
@@ -258,7 +260,7 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
         (m * (m - 1) * maxDistB1.y()) > epsilon_intersection) {
 
       const QList<QPointF> curvePoints =
-        BezierCalc::deCasteljauPolarForm(bezier1, t);
+        BezierCalc::deCasteljauPolarForm2(bezier1, t);
 
       QList<QPointF> leftHalf, rightHalf;
 
@@ -270,7 +272,7 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
                ((n * (n - 1) * maxDistB2.y()) > epsilon_intersection)) {
 
       const QList<QPointF> curvePoints =
-        BezierCalc::deCasteljauPolarForm(bezier2, t);
+        BezierCalc::deCasteljauPolarForm2(bezier2, t);
 
       QList<QPointF> leftHalf, rightHalf;
 
@@ -279,13 +281,12 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
       intersectBezier(bezier1, leftHalf);
       intersectBezier(bezier1, rightHalf);
     } else {
-      const QLineF line1 =
-        QLineF(bezier1[0], bezier1[bezier1.count() - 1]);
-      const  QLineF line2 =
-        QLineF(bezier2[0], bezier2[bezier2.count() - 1]);
+      const QLineF line1 = QLineF(bezier1[0], bezier1[bezier1.count() - 1]);
+      const QLineF line2 = QLineF(bezier2[0], bezier2[bezier2.count() - 1]);
 
       QPointF intersection;
-      const QLineF::IntersectType intersectioType = line1.intersect(line2, &intersection);
+      const QLineF::IntersectType intersectioType =
+        line1.intersect(line2, &intersection);
 
       if (intersectioType == QLineF::BoundedIntersection) {
         glPointSize(7.0);

@@ -34,6 +34,33 @@ BezierCalc::deCasteljauPolarForm(const QList<QPointF>& points, const double t)
   return totalResult;
 }
 
+QList<QPointF>
+BezierCalc::deCasteljauPolarForm2(const QList<QPointF>& poly, const double t)
+{
+  QList<QPointF> nextPoly;
+  float t_1 = 1 - t;
+
+  for (int i = 0; i < poly.count() - 1; ++i) {
+    const QPointF b = poly[i] * t_1 + poly[i + 1] * t;
+    nextPoly.append(b);
+  }
+
+  if (poly.count() == 1) {
+    return poly;
+  } else {
+    QList<QPointF> result = deCasteljauPolarForm2(nextPoly, t);
+    QList<QPointF> totalResult = { poly[0] };
+
+    for (int i = 0; i < result.count(); ++i) {
+      totalResult.append(result[i]);
+    }
+
+    totalResult.append(poly[poly.count() - 1]);
+
+    return totalResult;
+  }
+}
+
 QPointF
 BezierCalc::deCasteljauPolarFormRecursiv(const QList<QPointF>& points,
                                          const double t, const int totalDegree,
@@ -180,8 +207,8 @@ BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
 QPointF
 BezierCalc::getMaxForwardDistance(const QList<QPointF> points)
 {
-  double maxX = 0.0;
-  double maxY = 0.0;
+  double maxX = -100.0;
+  double maxY = -100.0;
 
   for (int i = 0; i < points.size() - 2; ++i) {
     // Slide 5-40
