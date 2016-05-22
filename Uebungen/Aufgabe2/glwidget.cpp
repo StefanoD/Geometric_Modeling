@@ -74,12 +74,24 @@ GLWidget::paintGL()
   glColor3f(1.0, 1.0, 1.0);
   // AUFGABE: Hier Kurve zeichnen
   // dabei epsilon_draw benutzen
-  QList<QPointF> curve1 = calcBezierCurve();
+  QList<QPointF> curve1 =
+    BezierCalc::calcBezierCurve(getControllPoints1(), epsilon_draw);
+
+  QList<QPointF> curve2 =
+    BezierCalc::calcBezierCurve(getControllPoints2(), epsilon_draw);
 
   glColor3f(1.0, 1.0, 0.0);
   glBegin(GL_LINE_STRIP);
 
   for (QPointF point : curve1) {
+    glVertex2f(point.x(), point.y());
+  }
+  glEnd();
+
+
+  glBegin(GL_LINE_STRIP);
+
+  for (QPointF point : curve2) {
     glVertex2f(point.x(), point.y());
   }
   glEnd();
@@ -95,25 +107,6 @@ GLWidget::paintGL()
     // AUFGABE: Hier Selbstschnitte zeichnen
     // dabei epsilon_intersection benutzen
   }
-}
-
-QList<QPointF>
-GLWidget::calcBezierCurve()
-{
-  QList<QPointF> controllPoints2 = getControllPoints2();
-  const int degree = controllPoints2.count() - 1;
-
-  QList<QPointF> bezierPoints;
-
-  for (float t = 0.0; t < 1.0; t += epsilon_draw) {
-    bezierPoints.append(BezierCalc::deCasteljau(controllPoints2, t, degree));
-  }
-
-  // Add last point. (b_0)^n is the last controll point for t = 1.
-
-  bezierPoints.append(controllPoints2[degree]);
-
-  return bezierPoints;
 }
 
 void

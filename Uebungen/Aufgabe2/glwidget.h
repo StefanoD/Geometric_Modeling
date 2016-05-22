@@ -19,7 +19,6 @@ public slots:
 
 protected:
     void paintGL              ();
-    QList<QPointF> calcBezierCurve();
     void initializeGL         ();
     void resizeGL             (int width, int height);
     void mouseMoveEvent       (QMouseEvent *event);

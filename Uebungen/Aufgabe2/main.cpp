@@ -15,7 +15,9 @@ main(int argc, char* argv[])
   points.append(QPointF(8.5, 6.5));
   points.append(QPointF(11.0, 2.0));
 
-  QPointF result = BezierCalc::deCasteljau(points, 0.6, points.count() - 1);
+  QList<QPointF>  points2 = points;
+
+  QPointF result = BezierCalc::deCasteljau(points2, 0.6, points.count() - 1);
 
   std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
   // Test END
