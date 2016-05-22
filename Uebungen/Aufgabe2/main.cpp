@@ -20,6 +20,10 @@ main(int argc, char* argv[])
   QPointF result = BezierCalc::deCasteljau(points2, 0.6, points.count() - 1);
 
   std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
+
+  QList<QPointF> results = BezierCalc::deCasteljauPolarForm(points2, 0.6);
+
+  std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
   // Test END
 
 

@@ -3,6 +3,8 @@
 #include <QtGui>
 #include <GL/glut.h>
 
+#include <algorithm>
+
 #include "mainwindow.h"
 
 #include "bezier_calc.h"
@@ -75,9 +77,15 @@ GLWidget::paintGL()
   // AUFGABE: Hier Kurve zeichnen
   // dabei epsilon_draw benutzen
 
-  const QList<QPointF>  controllPoints2 = getControllPoints2();
+  QList<QPointF>  controllPoints2 = getControllPoints2();
   const int degree = controllPoints2.count() - 1;
+
+  glColor3f(1.0, 1.0, 0.0);
+  glBegin(GL_LINE_STRIP);
+
   calcBezierCurvePolar(controllPoints2, degree, epsilon_draw);
+
+  glEnd();
 
   QList<QPointF> curve1 =
     BezierCalc::calcBezierCurveSimple(getControllPoints1(), epsilon_draw);
@@ -163,16 +171,14 @@ GLWidget::getControllPoints2()
 }
 
 void
-GLWidget::plotBezier(const QList<QPointF>& _points)
+GLWidget::plotBezier(QList<QPointF>& _points)
 {
-  glColor3f(1.0, 1.0, 0.0);
-  glBegin(GL_LINE_STRIP);
+  //std::sort(_points.begin(), _points.end(), less_than_key());
 
   for (const QPointF& point : _points) {
     glVertex2f(point.x(), point.y());
   }
 
-  glEnd();
 }
 
 void
@@ -206,7 +212,7 @@ GLWidget::mouseDoubleClickEvent(QMouseEvent*)
 }
 
 void
-GLWidget::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
+GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints,
                                const int degree, const double epsilon)
 {
   const double t = 0.5;

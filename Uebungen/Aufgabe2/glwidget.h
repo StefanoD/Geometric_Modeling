@@ -29,9 +29,18 @@ private:
   QPointF transformPosition(QPoint p);
   QList<QPointF> getControllPoints1();
   QList<QPointF> getControllPoints2();
-  void calcBezierCurvePolar(const QList<QPointF>& controllPoints,
+  void calcBezierCurvePolar(QList<QPointF> &controllPoints,
                             const int degree, const double epsilon);
-  void plotBezier(const QList<QPointF>& points);
+
+  struct less_than_key
+  {
+      inline bool operator() (const QPointF& p1, const QPointF& p2)
+      {
+          return (p1.x() < p2.x());
+      }
+  };
+
+  void plotBezier(QList<QPointF> &points);
   Points points;
   float aspectx, aspecty;
   float epsilon_draw, epsilon_intersection;

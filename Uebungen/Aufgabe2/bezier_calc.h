@@ -17,7 +17,8 @@ public:
 
   static QPointF deCasteljauPolarFormRecursiv(
     const QList<QPointF>& points, const double t, const int totalDegree,
-    const int currentDegree, QList<QPointF>& totalResult, const int index = 0);
+    const int currentDegree, QList<QPointF>& diagonal, QList<QPointF>& lastRow,
+    const int index = 0);
 
   static QList<QPointF> calcBezierCurveSimple(
     const QList<QPointF>& controllPoints, const double epsilon);

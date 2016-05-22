@@ -20,9 +20,18 @@ QList<QPointF>
 BezierCalc::deCasteljauPolarForm(const QList<QPointF>& points, const double t)
 {
   const int degree = points.count() - 1;
-  QList<QPointF> totalResult;
+  QList<QPointF> diagonal;
+  QList<QPointF> lastRow;
 
-  deCasteljauPolarFormRecursiv(points, t, degree, degree, totalResult);
+  deCasteljauPolarFormRecursiv(points, t, degree, degree, diagonal, lastRow);
+
+  QList<QPointF> totalResult;
+  totalResult.append(diagonal);
+
+  // Die untere Zeile muss verdammt scheiße nochmal rückwärts geholt werden!!!
+  for (auto it = lastRow.rbegin(); it != lastRow.rend(); ++it) {
+    totalResult.append(*it);
+  }
 
   return totalResult;
 }
@@ -31,7 +40,8 @@ QPointF
 BezierCalc::deCasteljauPolarFormRecursiv(const QList<QPointF>& points,
                                          const double t, const int totalDegree,
                                          const int currentDegree,
-                                         QList<QPointF>& totalResult,
+                                         QList<QPointF>& diagonal,
+                                         QList<QPointF>& lastRow,
                                          const int index)
 {
   QPointF result;
@@ -40,21 +50,21 @@ BezierCalc::deCasteljauPolarFormRecursiv(const QList<QPointF>& points,
   if (currentDegree == 0) {
     result = points.at(index);
   } else {
-    result = (1.0 - t) * deCasteljauPolarFormRecursiv(points, t, totalDegree,
-                                                      currentDegree - 1,
-                                                      totalResult, index) +
+    result = (1.0 - t) * deCasteljauPolarFormRecursiv(
+                           points, t, totalDegree, currentDegree - 1, diagonal,
+                           lastRow, index) +
              t * deCasteljauPolarFormRecursiv(points, t, totalDegree,
-                                              currentDegree - 1, totalResult,
-                                              index + 1);
+                                              currentDegree - 1, diagonal,
+                                              lastRow, index + 1);
   }
 
-  // Obere Diagonale
-  if (index == 0) {
-    totalResult.append(result);
-  }
   // Untere Zeile
-  else if ((totalDegree - currentDegree) == index) {
-    totalResult.append(result);
+  if ((totalDegree - currentDegree) == index) {
+    lastRow.append(result);
+  }
+  // Obere Diagonale
+  else if (index == 0) {
+    diagonal.append(result);
   }
 
   return result;
@@ -93,7 +103,7 @@ BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
 
 void
 BezierCalc::splitIntoHalf(const QList<QPointF>& source, QList<QPointF>& left,
-              QList<QPointF>& right)
+                          QList<QPointF>& right)
 {
   const int half = source.size() / 2;
 
