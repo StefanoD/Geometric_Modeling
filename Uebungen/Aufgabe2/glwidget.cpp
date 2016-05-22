@@ -74,24 +74,18 @@ GLWidget::paintGL()
   glColor3f(1.0, 1.0, 1.0);
   // AUFGABE: Hier Kurve zeichnen
   // dabei epsilon_draw benutzen
-  QList<QPointF> curve1 =
-    BezierCalc::calcBezierCurve(getControllPoints1(), epsilon_draw);
 
-  QList<QPointF> curve2 =
-    BezierCalc::calcBezierCurve(getControllPoints2(), epsilon_draw);
+  const QList<QPointF>  controllPoints2 = getControllPoints2();
+  const int degree = controllPoints2.count() - 1;
+  calcBezierCurvePolar(controllPoints2, degree, epsilon_draw);
+
+  QList<QPointF> curve1 =
+    BezierCalc::calcBezierCurveSimple(getControllPoints1(), epsilon_draw);
 
   glColor3f(1.0, 1.0, 0.0);
   glBegin(GL_LINE_STRIP);
 
   for (QPointF point : curve1) {
-    glVertex2f(point.x(), point.y());
-  }
-  glEnd();
-
-
-  glBegin(GL_LINE_STRIP);
-
-  for (QPointF point : curve2) {
     glVertex2f(point.x(), point.y());
   }
   glEnd();
@@ -169,6 +163,19 @@ GLWidget::getControllPoints2()
 }
 
 void
+GLWidget::plotBezier(const QList<QPointF>& _points)
+{
+  glColor3f(1.0, 1.0, 0.0);
+  glBegin(GL_LINE_STRIP);
+
+  for (const QPointF& point : _points) {
+    glVertex2f(point.x(), point.y());
+  }
+
+  glEnd();
+}
+
+void
 GLWidget::mouseMoveEvent(QMouseEvent* event)
 {
   if (event->buttons() & Qt::LeftButton) {
@@ -196,6 +203,27 @@ GLWidget::mousePressEvent(QMouseEvent* event)
 void
 GLWidget::mouseDoubleClickEvent(QMouseEvent*)
 {
+}
+
+void
+GLWidget::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
+                               const int degree, const double epsilon)
+{
+  const double t = 0.5;
+  const QPointF maxDist = BezierCalc::getMaxForwardDistance(controllPoints);
+
+  if (degree == 0 || (maxDist.x() < epsilon && maxDist.y() < epsilon)) {
+    plotBezier(controllPoints);
+  } else {
+    const QList<QPointF> curvePoints = BezierCalc::deCasteljauPolarForm(controllPoints, t);
+    QList<QPointF> leftHalf;
+    QList<QPointF> rightHalf;
+
+    BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
+
+    calcBezierCurvePolar(leftHalf, degree - 1, epsilon);
+    calcBezierCurvePolar(rightHalf, degree - 1, epsilon);
+  }
 }
 
 void
