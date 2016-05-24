@@ -131,8 +131,9 @@ BezierCalc::splitIntoHalf(const QList<QPointF>& source, QList<QPointF>& left,
                           QList<QPointF>& right)
 {
   const int half = source.size() / 2;
+  const int end = source.size();
 
-  for (int i = 0; i < source.size(); ++i) {
+  for (int i = 0; i < end; ++i) {
     if (i < half) {
       left.append(source[i]);
     } else {
