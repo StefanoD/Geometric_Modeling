@@ -34,33 +34,6 @@ BezierCalc::deCasteljauPolarForm(const QList<QPointF>& points, const double t)
   return totalResult;
 }
 
-QList<QPointF>
-BezierCalc::deCasteljauPolarForm2(const QList<QPointF>& poly, const double t)
-{
-  QList<QPointF> nextPoly;
-  float t_1 = 1 - t;
-
-  for (int i = 0; i < poly.count() - 1; ++i) {
-    const QPointF b = poly[i] * t_1 + poly[i + 1] * t;
-    nextPoly.append(b);
-  }
-
-  if (poly.count() == 1) {
-    return poly;
-  } else {
-    QList<QPointF> result = deCasteljauPolarForm2(nextPoly, t);
-    QList<QPointF> totalResult = { poly[0] };
-
-    for (int i = 0; i < result.count(); ++i) {
-      totalResult.append(result[i]);
-    }
-
-    totalResult.append(poly[poly.count() - 1]);
-
-    return totalResult;
-  }
-}
-
 QPointF
 BezierCalc::deCasteljauPolarFormRecursiv(const QList<QPointF>& points,
                                          const double t, const int totalDegree,
@@ -155,8 +128,11 @@ BezierCalc::boundingBoxesIntersects(QList<QPointF>& bezier1,
   getMinMax(bezier1, bezier1Min, bezier1Max);
   getMinMax(bezier2, bezier2Min, bezier2Max);
 
-  return bezier1Min.x() < bezier2Max.x() && bezier1Max.x() > bezier2Min.x() &&
-         bezier1Min.y() < bezier2Max.y() && bezier1Max.y() > bezier2Min.y();
+  if (bezier1Min.x() < bezier2Max.x() && bezier1Max.x() > bezier2Min.x() &&
+      bezier1Min.y() < bezier2Max.y() && bezier1Max.y() > bezier2Min.y()) {
+    return true;
+  }
+  return false;
 }
 
 void

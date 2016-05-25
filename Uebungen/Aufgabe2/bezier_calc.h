@@ -13,9 +13,6 @@ public:
   static QList<QPointF> deCasteljauPolarForm(const QList<QPointF>& points,
                                              const double t);
 
-  static QList<QPointF> deCasteljauPolarForm2(const QList<QPointF>& points,
-                                             const double t);
-
   static QPointF deCasteljauPolarFormRecursiv(
     const QList<QPointF>& points, const double t, const int totalDegree,
     const int currentDegree, QList<QPointF>& diagonal, QList<QPointF>& lastRow,
