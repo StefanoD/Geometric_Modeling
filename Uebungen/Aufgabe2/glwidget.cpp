@@ -12,6 +12,7 @@
 GLWidget::GLWidget(QWidget* parent)
   : QGLWidget(parent)
 {
+  doCalcCn1 = true;
   doIntersection = false;
   doSelfIntersection = false;
   epsilon_draw = (float)0.05;
@@ -123,6 +124,9 @@ GLWidget::paintGL()
     selfIntersect(controllPoints1);
     selfIntersect(controllPoints2);
   }
+  if (doCalcCn1) {
+    calcCn1(controllPoints2);
+  }
 }
 
 void
@@ -215,6 +219,16 @@ GLWidget::mousePressEvent(QMouseEvent* event)
     points.setPointY(clickedPoint, posF.y());
     update();
   }
+
+  if (event->buttons() & Qt::RightButton) {
+    const QPoint pos = event->pos();
+    const QPointF posF = transformPosition(pos);
+    if (doCalcCn1) {
+      clickedPoint = points.getClosestPoint(posF.x(), posF.y());
+      cn1Point = QPointF(posF.x(), posF.y());
+      update();
+    }
+  }
 }
 
 void
@@ -297,6 +311,45 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
         glEnd();
       }
     }
+  }
+}
+
+void
+GLWidget::calcCn1(const QList<QPointF> controllPoints)
+{
+  if (!cn1Point.isNull()) {
+    glColor3f(1.0, 1.0, 0.0);
+    QList<QPointF> cn1_points =
+      BezierCalc::computeCn1(controllPoints, cn1Point);
+
+    QList<QPointF> bezierCurve =
+      BezierCalc::calcBezierCurvePolar(cn1_points, epsilon_draw);
+
+    glColor3f(1.0, 1.0, 0.0);
+    glBegin(GL_LINE_STRIP);
+
+    for (const QPointF point : bezierCurve) {
+      glVertex2f(point.x(), point.y());
+    }
+    glEnd();
+
+    // draw new control point
+    glColor3f(0.5, 0.0, 0.0);
+    glPointSize(7.0);
+    glBegin(GL_POINTS);
+    glVertex2f(cn1Point.x(), cn1Point.y());
+    glEnd();
+
+    // draw new control polygon
+    glColor3f(0.0, 0.5, 0.5);
+
+    // draw new control polygon
+    glBegin(GL_LINE_STRIP);
+
+    for (const QPointF point : cn1_points) {
+      glVertex2f(point.x(), point.y());
+    }
+    glEnd();
   }
 }
 

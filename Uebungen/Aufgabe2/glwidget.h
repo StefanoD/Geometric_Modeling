@@ -32,13 +32,15 @@ private:
 
   void selfIntersect(QList<QPointF>& controllPoints);
   void intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2);
+  void calcCn1(const QList<QPointF> controllPoints);
 
   void plotBezier(QList<QPointF>& points);
   Points points;
   float aspectx, aspecty;
   float epsilon_draw, epsilon_intersection;
   int clickedPoint;
-  bool doIntersection, doSelfIntersection;
+  bool doIntersection, doSelfIntersection, doCalcCn1;
+  QPointF cn1Point;
 };
 
 #endif // GLWIDGET_H

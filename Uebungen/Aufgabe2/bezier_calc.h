@@ -36,6 +36,9 @@ public:
 
   static double getTotalAngle(const QList<QPointF>& controllPoints);
 
+  static QList<QPointF> computeCn1(const QList<QPointF>& controllPoints,
+                                   const QPointF& new_point);
+
 private:
   static void calcBezierCurvePolar(const QList<QPointF>& controllPoints,
                                    const int k, const double epsilon,

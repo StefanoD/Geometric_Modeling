@@ -70,6 +70,24 @@ BezierCalc::deCasteljauPolarFormRecursiv(const QList<QPointF>& points,
 }
 
 QList<QPointF>
+BezierCalc::computeCn1(const QList<QPointF>& controllPoints,
+                        const QPointF& new_point)
+{
+  const double t = 2;
+  QList<QPointF> consecutivePoints = deCasteljauPolarForm(controllPoints, t);
+
+  QList<QPointF> resultPoints;
+
+  for (int i = consecutivePoints.size() - 1; i > controllPoints.size(); --i) {
+    resultPoints.append(consecutivePoints[i]);
+  }
+
+  resultPoints.append(new_point);
+
+  return resultPoints;
+}
+
+QList<QPointF>
 BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
                                  const double epsilon)
 {
@@ -218,9 +236,12 @@ BezierCalc::computeSelfIntersectionFreeSegments(
   if (angle < 180) {
     resultSegments.append(bezierPolygon);
   } else {
-    const QList<QPointF> newBezierPolygon = deCasteljauPolarForm(bezierPolygon, t);
+    const QList<QPointF> newBezierPolygon =
+      deCasteljauPolarForm(bezierPolygon, t);
     QList<QPointF> left, right;
+
     splitIntoHalf(newBezierPolygon, left, right);
+
     computeSelfIntersectionFreeSegments(left, resultSegments);
     computeSelfIntersectionFreeSegments(right, resultSegments);
   }
