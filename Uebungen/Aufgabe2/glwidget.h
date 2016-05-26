@@ -29,7 +29,7 @@ private:
   QPointF transformPosition(QPoint p);
   QList<QPointF> getControllPoints1();
   QList<QPointF> getControllPoints2();
-  void calcBezierCurvePolar(QList<QPointF>& controllPoints, const int degree,
+  void calcBezierCurvePolar(QList<QPointF>& controllPoints, const int k,
                             const double epsilon, QList<QPointF> &resultCurve);
   void intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2);
 

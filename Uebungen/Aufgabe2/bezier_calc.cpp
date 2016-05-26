@@ -69,25 +69,6 @@ BezierCalc::deCasteljauPolarFormRecursiv(const QList<QPointF>& points,
 }
 
 QList<QPointF>
-BezierCalc::calcBezierCurveSimple(const QList<QPointF>& controllPoints,
-                                  const double epsilon)
-{
-  const int degree = controllPoints.count() - 1;
-
-  QList<QPointF> bezierPoints;
-
-  for (float t = 0.0; t < 1.0; t += epsilon) {
-    bezierPoints.append(BezierCalc::deCasteljau(controllPoints, t, degree));
-  }
-
-  // Add last point. (b_0)^n is the last controll point for t = 1.
-
-  bezierPoints.append(controllPoints[degree]);
-
-  return bezierPoints;
-}
-
-QList<QPointF>
 BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
                                  const double epsilon)
 {
@@ -163,9 +144,9 @@ BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
                                  QList<QPointF>& result)
 {
   const double t = 0.5;
-  const QPointF maxDist = getMaxForwardDistance(controllPoints);
+  const double maxDist = getMaxForwardDistance(controllPoints);
 
-  if (degree == 0 || (maxDist.x() < epsilon && maxDist.y() < epsilon)) {
+  if (degree == 0 || maxDist < epsilon) {
     result.append(controllPoints);
   } else {
     const QList<QPointF> curvePoints = deCasteljauPolarForm(controllPoints, t);
@@ -179,21 +160,32 @@ BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
   }
 }
 
+double
+BezierCalc::getTotalAngle(QList<QPointF>& points)
+{
+  return 0;
+}
+
 // private
 
-QPointF
-BezierCalc::getMaxForwardDistance(const QList<QPointF> points)
+double
+BezierCalc::getMaxForwardDistance(const QList<QPointF>& points)
 {
-  double maxX = -100.0;
-  double maxY = -100.0;
+  double maxNorm = -2;
 
   for (int i = 0; i < points.size() - 2; ++i) {
     // Slide 5-40
     const QPointF temp = points[i + 2] - 2 * points[i + 1] + points[i];
-
-    maxX = fmax(std::abs(temp.x()), maxX);
-    maxY = fmax(std::abs(temp.y()), maxY);
+    maxNorm =
+      fmax(maxNorm, std::sqrt(temp.x() * temp.x() + temp.y() * temp.y()));
   }
 
-  return QPointF(maxX, maxY);
+  return maxNorm;
+}
+
+bool
+BezierCalc::selfIntersect(QList<QPointF>& points, const int epislon)
+{
+  if (getTotalAngle(points) > 180) {
+  }
 }

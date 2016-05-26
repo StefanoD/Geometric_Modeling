@@ -77,17 +77,18 @@ GLWidget::paintGL()
   // AUFGABE: Hier Kurve zeichnen
   // dabei epsilon_draw benutzen
 
-    QList<QPointF> controllPoints2 = getControllPoints2();
+  QList<QPointF> controllPoints2 = getControllPoints2();
 
-    //glColor3f(1.0, 1.0, 0.0);
-    //glBegin(GL_LINE_STRIP);
-    QList<QPointF> curve2;
+  // glColor3f(1.0, 1.0, 0.0);
+  // glBegin(GL_LINE_STRIP);
+  QList<QPointF> curve2;
 
-    calcBezierCurvePolar(controllPoints2, 1000, epsilon_draw, curve2);
+  calcBezierCurvePolar(controllPoints2, 1000, epsilon_draw, curve2);
 
-    //glEnd();
+  // glEnd();
 
-  //QList<QPointF> curve2 = BezierCalc::calcBezierCurveSimple(getControllPoints2(), epsilon_draw);
+  // QList<QPointF> curve2 =
+  // BezierCalc::calcBezierCurveSimple(getControllPoints2(), epsilon_draw);
 
   glColor3f(1.0, 1.0, 0.0);
   glBegin(GL_LINE_STRIP);
@@ -114,14 +115,14 @@ GLWidget::paintGL()
     glColor3f(0.0, 1.0, 0.0);
     // AUFGABE: Hier Schnitte zeichnen
     // dabei epsilon_intersection benutzen
-    intersectBezier(curve1, curve2);
+    intersectBezier(controllPoints1, controllPoints2);
   }
   if (doSelfIntersection) {
     glColor3f(1.0, 0.0, 1.0);
     // AUFGABE: Hier Selbstschnitte zeichnen
     // dabei epsilon_intersection benutzen
-    intersectBezier(curve1, curve1);
-    intersectBezier(curve2, curve2);
+    intersectBezier(controllPoints1, controllPoints1);
+    intersectBezier(controllPoints2, controllPoints2);
   }
 }
 
@@ -223,15 +224,16 @@ GLWidget::mouseDoubleClickEvent(QMouseEvent*)
 }
 
 void
-GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints, const int degree,
-                               const double epsilon, QList<QPointF>& resultCurve)
+GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints, const int k,
+                               const double epsilon,
+                               QList<QPointF>& resultCurve)
 {
   const double t = 0.1;
-  const QPointF maxDist = BezierCalc::getMaxForwardDistance(controllPoints);
+  const double maxDist = BezierCalc::getMaxForwardDistance(controllPoints);
 
-  if (degree == 0 || (maxDist.x() < epsilon && maxDist.y() < epsilon)) {
-    //plotBezier(controllPoints);
-      resultCurve.append(controllPoints);
+  if (k == 0 || (maxDist < epsilon)) {
+    // plotBezier(controllPoints);
+    resultCurve.append(controllPoints);
   } else {
     const QList<QPointF> curvePoints =
       BezierCalc::deCasteljauPolarForm(controllPoints, t);
@@ -240,8 +242,8 @@ GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints, const int degree,
 
     BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
 
-    calcBezierCurvePolar(leftHalf, degree - 1, epsilon, resultCurve);
-    calcBezierCurvePolar(rightHalf, degree - 1, epsilon, resultCurve);
+    calcBezierCurvePolar(leftHalf, k - 1, epsilon, resultCurve);
+    calcBezierCurvePolar(rightHalf, k - 1, epsilon, resultCurve);
   }
 }
 
@@ -249,37 +251,35 @@ void
 GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
 {
   if (BezierCalc::boundingBoxesIntersects(bezier1, bezier2)) {
-    //const double t = 0.5;
+    const double t = 0.5;
 
     int m = bezier1.count();
     int n = bezier2.count();
 
-    const QPointF maxDistB1 = BezierCalc::getMaxForwardDistance(bezier1);
-    const QPointF maxDistB2 = BezierCalc::getMaxForwardDistance(bezier2);
+    const double maxDistB1 = BezierCalc::getMaxForwardDistance(bezier1);
+    const double maxDistB2 = BezierCalc::getMaxForwardDistance(bezier2);
 
-    if ((m * (m - 1) * maxDistB1.x()) > epsilon_intersection &&
-        (m * (m - 1) * maxDistB1.y()) > epsilon_intersection) {
+    if ((m * (m - 1) * maxDistB1) > epsilon_intersection) {
 
-      /*const QList<QPointF> curvePoints =
-        BezierCalc::deCasteljauPolarForm(bezier1, t);*/
+      const QList<QPointF> curvePoints =
+        BezierCalc::deCasteljauPolarForm(bezier1, t);
 
       QList<QPointF> leftHalf, rightHalf;
 
-      //BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
-      BezierCalc::splitIntoHalf(bezier1, leftHalf, rightHalf);
+      BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
+      //BezierCalc::splitIntoHalf(bezier1, leftHalf, rightHalf);
 
       intersectBezier(leftHalf, bezier2);
       intersectBezier(rightHalf, bezier2);
-    } else if (((n * (n - 1) * maxDistB2.x()) > epsilon_intersection) &&
-               ((n * (n - 1) * maxDistB2.y()) > epsilon_intersection)) {
+    } else if (((n * (n - 1) * maxDistB2) > epsilon_intersection)) {
 
-      /*const QList<QPointF> curvePoints =
-        BezierCalc::deCasteljauPolarForm(bezier2, t);*/
+      const QList<QPointF> curvePoints =
+        BezierCalc::deCasteljauPolarForm(bezier2, t);
 
       QList<QPointF> leftHalf, rightHalf;
 
-      //BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
-      BezierCalc::splitIntoHalf(bezier2, leftHalf, rightHalf);
+      BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
+      //BezierCalc::splitIntoHalf(bezier2, leftHalf, rightHalf);
 
       intersectBezier(bezier1, leftHalf);
       intersectBezier(bezier1, rightHalf);
@@ -320,10 +320,12 @@ void
 GLWidget::setEpsilonDraw(double value)
 {
   epsilon_draw = value;
+  update();
 }
 
 void
 GLWidget::setEpsilonIntersection(double value)
 {
   epsilon_intersection = value;
+  update();
 }
