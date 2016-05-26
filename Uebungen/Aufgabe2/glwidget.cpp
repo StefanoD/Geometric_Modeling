@@ -81,9 +81,8 @@ GLWidget::paintGL()
 
   // glColor3f(1.0, 1.0, 0.0);
   // glBegin(GL_LINE_STRIP);
-  QList<QPointF> curve2;
-
-  calcBezierCurvePolar(controllPoints2, 1000, epsilon_draw, curve2);
+  QList<QPointF> curve2 =
+    BezierCalc::calcBezierCurvePolar(controllPoints2, epsilon_draw);
 
   // glEnd();
 
@@ -99,8 +98,8 @@ GLWidget::paintGL()
   glEnd();
 
   QList<QPointF> controllPoints1 = getControllPoints1();
-  QList<QPointF> curve1;
-  calcBezierCurvePolar(controllPoints1, 1000, epsilon_draw, curve1);
+  QList<QPointF> curve1 =
+    BezierCalc::calcBezierCurvePolar(controllPoints1, epsilon_draw);
 
   glColor3f(1.0, 1.0, 0.0);
   glBegin(GL_LINE_STRIP);
@@ -121,8 +120,8 @@ GLWidget::paintGL()
     glColor3f(1.0, 0.0, 1.0);
     // AUFGABE: Hier Selbstschnitte zeichnen
     // dabei epsilon_intersection benutzen
-    intersectBezier(controllPoints1, controllPoints1);
-    intersectBezier(controllPoints2, controllPoints2);
+    selfIntersect(controllPoints1);
+    selfIntersect(controllPoints2);
   }
 }
 
@@ -224,26 +223,25 @@ GLWidget::mouseDoubleClickEvent(QMouseEvent*)
 }
 
 void
-GLWidget::calcBezierCurvePolar(QList<QPointF>& controllPoints, const int k,
-                               const double epsilon,
-                               QList<QPointF>& resultCurve)
+GLWidget::selfIntersect(QList<QPointF>& controllPoints)
 {
-  const double t = 0.1;
-  const double maxDist = BezierCalc::getMaxForwardDistance(controllPoints);
+  const double totalAngle = BezierCalc::getTotalAngle(controllPoints);
+  const bool isSelfIntersection = totalAngle > 180;
 
-  if (k == 0 || (maxDist < epsilon)) {
-    // plotBezier(controllPoints);
-    resultCurve.append(controllPoints);
-  } else {
-    const QList<QPointF> curvePoints =
-      BezierCalc::deCasteljauPolarForm(controllPoints, t);
-    QList<QPointF> leftHalf;
-    QList<QPointF> rightHalf;
+  if (isSelfIntersection) {
+    QList<QList<QPointF>> segmentsNoSelfIntersection;
 
-    BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
+    // Zerteile solange kein Selbstschnitt gemessen wird
+    BezierCalc::computeSelfIntersectionFreeSegments(controllPoints,
+                                                    segmentsNoSelfIntersection);
 
-    calcBezierCurvePolar(leftHalf, k - 1, epsilon, resultCurve);
-    calcBezierCurvePolar(rightHalf, k - 1, epsilon, resultCurve);
+    // Teste ein Segment auf Schnitt mit jedem anderen Segment
+    for (int i = 0; i < segmentsNoSelfIntersection.size() - 1; ++i) {
+      for (int j = i + 1; j < segmentsNoSelfIntersection.size(); ++j) {
+        intersectBezier(segmentsNoSelfIntersection[i],
+                        segmentsNoSelfIntersection[j]);
+      }
+    }
   }
 }
 
@@ -267,7 +265,7 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
       QList<QPointF> leftHalf, rightHalf;
 
       BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
-      //BezierCalc::splitIntoHalf(bezier1, leftHalf, rightHalf);
+      // BezierCalc::splitIntoHalf(bezier1, leftHalf, rightHalf);
 
       intersectBezier(leftHalf, bezier2);
       intersectBezier(rightHalf, bezier2);
@@ -279,7 +277,7 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
       QList<QPointF> leftHalf, rightHalf;
 
       BezierCalc::splitIntoHalf(curvePoints, leftHalf, rightHalf);
-      //BezierCalc::splitIntoHalf(bezier2, leftHalf, rightHalf);
+      // BezierCalc::splitIntoHalf(bezier2, leftHalf, rightHalf);
 
       intersectBezier(bezier1, leftHalf);
       intersectBezier(bezier1, rightHalf);

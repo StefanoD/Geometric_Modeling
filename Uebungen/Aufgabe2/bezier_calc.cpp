@@ -1,6 +1,7 @@
 #include "bezier_calc.h"
 #include <cmath>
 #include <vector>
+#include <QLineF>
 #include "points.h"
 
 QPointF
@@ -74,8 +75,7 @@ BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
 {
   QList<QPointF> pointsOnCurve;
 
-  calcBezierCurvePolar(controllPoints, controllPoints.count() - 1, epsilon,
-                       pointsOnCurve);
+  calcBezierCurvePolar(controllPoints, 1000, epsilon, pointsOnCurve);
 
   return pointsOnCurve;
 }
@@ -140,13 +140,13 @@ BezierCalc::getMinMax(QList<QPointF>& bezier, QPointF& min, QPointF& max)
 
 void
 BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
-                                 const int degree, const double epsilon,
+                                 const int k, const double epsilon,
                                  QList<QPointF>& result)
 {
-  const double t = 0.5;
+  const double t = 0.1;
   const double maxDist = getMaxForwardDistance(controllPoints);
 
-  if (degree == 0 || maxDist < epsilon) {
+  if (k == 0 || maxDist < epsilon) {
     result.append(controllPoints);
   } else {
     const QList<QPointF> curvePoints = deCasteljauPolarForm(controllPoints, t);
@@ -155,15 +155,40 @@ BezierCalc::calcBezierCurvePolar(const QList<QPointF>& controllPoints,
 
     splitIntoHalf(curvePoints, leftHalf, rightHalf);
 
-    calcBezierCurvePolar(leftHalf, degree - 1, epsilon, result);
-    calcBezierCurvePolar(rightHalf, degree - 1, epsilon, result);
+    calcBezierCurvePolar(leftHalf, k - 1, epsilon, result);
+    calcBezierCurvePolar(rightHalf, k - 1, epsilon, result);
   }
 }
 
 double
-BezierCalc::getTotalAngle(QList<QPointF>& points)
+BezierCalc::getTotalAngle(const QList<QPointF>& controllPoints)
 {
-  return 0;
+  int end = controllPoints.size() - 1;
+
+  // compute first derivation
+  QList<QPointF> derivation;
+
+  for (int i = 0; i < end; ++i) {
+    derivation.append(controllPoints[i + 1] - controllPoints[i]);
+  }
+
+  double totalAngle = 0.0;
+  end = derivation.size() - 1;
+
+  for (int i = 0; i < end; ++i) {
+    const QLineF line1 = QLineF(QPointF(0, 0), derivation[i]);
+    const QLineF line2 = QLineF(QPointF(0, 0), derivation[i + 1]);
+
+    double tmpAngle = line1.angleTo(line2);
+
+    if (tmpAngle > 180) {
+      tmpAngle = 360 - tmpAngle;
+    }
+
+    totalAngle += tmpAngle;
+  }
+
+  return totalAngle;
 }
 
 // private
@@ -183,9 +208,20 @@ BezierCalc::getMaxForwardDistance(const QList<QPointF>& points)
   return maxNorm;
 }
 
-bool
-BezierCalc::selfIntersect(QList<QPointF>& points, const int epislon)
+void
+BezierCalc::computeSelfIntersectionFreeSegments(
+  const QList<QPointF>& bezierPolygon, QList<QList<QPointF>>& resultSegments)
 {
-  if (getTotalAngle(points) > 180) {
+  const double t = 0.5;
+  const double angle = getTotalAngle(bezierPolygon);
+
+  if (angle < 180) {
+    resultSegments.append(bezierPolygon);
+  } else {
+    const QList<QPointF> newBezierPolygon = deCasteljauPolarForm(bezierPolygon, t);
+    QList<QPointF> left, right;
+    splitIntoHalf(newBezierPolygon, left, right);
+    computeSelfIntersectionFreeSegments(left, resultSegments);
+    computeSelfIntersectionFreeSegments(right, resultSegments);
   }
 }

@@ -23,8 +23,6 @@ public:
 
   static double getMaxForwardDistance(const QList<QPointF>& points);
 
-  static bool selfIntersect(QList<QPointF>& points, const int epislon);
-
   static void splitIntoHalf(const QList<QPointF>& source, QList<QPointF>& left,
                             QList<QPointF>& right);
 
@@ -33,12 +31,15 @@ public:
 
   static void getMinMax(QList<QPointF>& bezier, QPointF& min, QPointF& max);
 
+  static void computeSelfIntersectionFreeSegments(
+    const QList<QPointF>& bezierPoints, QList<QList<QPointF>>& resultSegments);
+
+  static double getTotalAngle(const QList<QPointF>& controllPoints);
+
 private:
   static void calcBezierCurvePolar(const QList<QPointF>& controllPoints,
-                                   const int degree, const double epsilon,
+                                   const int k, const double epsilon,
                                    QList<QPointF>& result);
-
-  static double getTotalAngle(QList<QPointF>& points);
 };
 
 #endif // BEZIERCALC_H
