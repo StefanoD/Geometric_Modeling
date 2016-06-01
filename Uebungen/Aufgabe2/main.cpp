@@ -17,13 +17,11 @@ main(int argc, char* argv[])
 
   QList<QPointF>  points2 = points;
 
-  QPointF result = BezierCalc::deCasteljau(points2, 0.6, points.count() - 1);
 
-  std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
+  QList<QPointF> results;
+  BezierCalc::deCasteljau(results, points2, results.size(), 0.6);
 
-  QList<QPointF> results = BezierCalc::deCasteljauPolarForm(points2, 0.6);
-
-  std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
+  //std::cout << "Result: (" << result.x() << ", " << result.y() << "), Exptected: (6.63, 4.54)" << std::endl;
   // Test END
 
 

@@ -272,9 +272,9 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
     const double maxDistB2 = BezierCalc::getMaxForwardDistance(bezier2);
 
     if ((m * (m - 1) * maxDistB1) > epsilon_intersection) {
+      QList<QPointF> curvePoints;
 
-      const QList<QPointF> curvePoints =
-        BezierCalc::deCasteljauPolarForm(bezier1, t);
+      BezierCalc::deCasteljau(curvePoints, bezier1, bezier1.size(), t);
 
       QList<QPointF> leftHalf, rightHalf;
 
@@ -284,9 +284,9 @@ GLWidget::intersectBezier(QList<QPointF> bezier1, QList<QPointF> bezier2)
       intersectBezier(leftHalf, bezier2);
       intersectBezier(rightHalf, bezier2);
     } else if (((n * (n - 1) * maxDistB2) > epsilon_intersection)) {
+      QList<QPointF> curvePoints;
 
-      const QList<QPointF> curvePoints =
-        BezierCalc::deCasteljauPolarForm(bezier2, t);
+      BezierCalc::deCasteljau(curvePoints, bezier2, bezier2.size(), t);
 
       QList<QPointF> leftHalf, rightHalf;
 
@@ -318,16 +318,14 @@ void
 GLWidget::calcCn1(const QList<QPointF> controllPoints)
 {
   if (!cn1Point.isNull()) {
-    glColor3f(1.0, 1.0, 0.0);
-    QList<QPointF> cn1_points =
+    const QList<QPointF> cn1Points =
       BezierCalc::computeCn1(controllPoints, cn1Point);
 
-    QList<QPointF> bezierCurve =
-      BezierCalc::calcBezierCurvePolar(cn1_points, epsilon_draw);
+    const QList<QPointF> bezierCurve =
+      BezierCalc::calcBezierCurvePolar(cn1Points, epsilon_draw);
 
     glColor3f(1.0, 1.0, 0.0);
     glBegin(GL_LINE_STRIP);
-
     for (const QPointF point : bezierCurve) {
       glVertex2f(point.x(), point.y());
     }
@@ -346,7 +344,7 @@ GLWidget::calcCn1(const QList<QPointF> controllPoints)
     // draw new control polygon
     glBegin(GL_LINE_STRIP);
 
-    for (const QPointF point : cn1_points) {
+    for (const QPointF point : cn1Points) {
       glVertex2f(point.x(), point.y());
     }
     glEnd();

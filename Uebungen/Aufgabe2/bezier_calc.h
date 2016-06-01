@@ -7,17 +7,6 @@
 class BezierCalc
 {
 public:
-  static QPointF deCasteljau(const QList<QPointF>& points, const double t,
-                             const int degree, const int index = 0);
-
-  static QList<QPointF> deCasteljauPolarForm(const QList<QPointF>& points,
-                                             const double t);
-
-  static QPointF deCasteljauPolarFormRecursiv(
-    const QList<QPointF>& points, const double t, const int totalDegree,
-    const int currentDegree, QList<QPointF>& diagonal, QList<QPointF>& lastRow,
-    const int index = 0);
-
   static QList<QPointF> calcBezierCurvePolar(
     const QList<QPointF>& controllPoints, const double epsilon);
 
@@ -37,7 +26,11 @@ public:
   static double getTotalAngle(const QList<QPointF>& controllPoints);
 
   static QList<QPointF> computeCn1(const QList<QPointF>& controllPoints,
-                                   const QPointF& new_point);
+                                   const QPointF& newPoint);
+
+  static void deCasteljau(QList<QPointF>& resultCurve,
+                          const QList<QPointF>& controllPoints,
+                          const int degree, const float t);
 
 private:
   static void calcBezierCurvePolar(const QList<QPointF>& controllPoints,
